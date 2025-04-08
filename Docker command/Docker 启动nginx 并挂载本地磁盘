@@ -1,3 +1,4 @@
 
+docker run -it --rm -d -p 8080:80 --name=mywebsite -v ~/site-content:/usr/share/nginx/html nginx
 
-docker run 
+nginx 挂载本地存储 
