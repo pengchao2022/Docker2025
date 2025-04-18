@@ -1,0 +1,29 @@
+1, 拉取gitlab ce 的镜像
+
+  docker pull gitlab/gitlab-ce:latest 
+
+2，创建三个文件夹，来保存 gitlad 的 配置文件，logs, 数据
+
+  sudo mkdir -p /srv/gitlab/config /srv/gitlab/logs /srv/gitlab/data
+
+3，运行镜像来创建容器
+
+  sudo docker run --detach \
+  --hostname 172.16.217.132 \
+  --publish 443:443 --publish 1080:80 --publish 1022:22 \
+  --name gitlab \
+  --restart always \
+  --volume /srv/gitlab/config:/etc/gitlab \
+  --volume /srv/gitlab/logs:/var/log/gitlab \
+  --volume /srv/gitlab/data:/var/opt/gitlab \
+  gitlab/gitlab-ce:latest
+
+4，更改root 用户的密码
+
+   首先进入 gitlab 容器
+    sudo docker exec -it gitlab /bin/bash
+
+   然后执行命令来修改root 密码：
+    gitlab-rake "gitlab:password:reset"
+
+完毕！
