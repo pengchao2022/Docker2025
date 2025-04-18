@@ -1,0 +1,20 @@
+Docker 安装Jenkins 的步骤：
+
+1，拉取镜像
+
+docker pull jenkins/jenkins
+
+2, 创建文件夹 /root/jenkins
+
+mkdir -p /root/jenkins
+
+3, 更改权限
+
+chmod 777 /root/jenkins
+
+4，运行镜像
+
+docker run --name=myjenkins --restart=always -p 8080:8080 -p 50000:50000 -v /root/jenkins:/var/jenkins_home jenkins/jenkins
+
+
+完毕！
