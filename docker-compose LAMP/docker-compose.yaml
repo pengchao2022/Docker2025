@@ -1,0 +1,63 @@
+docker-compose 构建LAMP 平台
+
+首先创建文件夹 lamp-docker 
+mkdir -p /usr/local/lamp-docker
+
+在文件夹中编写docker-compose.yaml 文件
+vi docker-compose.yaml
+
+version: '3'
+services:
+  web:
+    build: .
+    container_name: apache-php
+    ports:
+      - "1200:80"
+    volumes:
+      - ./www:/var/www/html
+  db:
+    image: mysql:8
+    container_name: mysql-server
+    command: --default-authentication-plugin=mysql_native_password
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: secure_password
+      MYSQL_DATABASE: mydb
+      MYSQL_USER: myuser
+      MYSQL_PASSWORD: password
+    ports:
+      - "3306:3306"
+    volumes:
+      - db_data:/var/lib/mysql
+volumes:
+  db_data:
+
+
+编写Dockerfile 定义PHP环境
+vim Dockerfile
+
+FROM php:8.3-apache
+
+# Install additional PHP modules
+RUN docker-php-ext-install pdo_mysql mysqli
+
+# Install Composer
+RUN php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');" && \
+    php composer-setup.php --install-dir=/usr/local/bin --filename=composer && \
+    php -r "unlink('composer-setup.php');"
+
+# Enable Apache mod_rewrite
+RUN a2enmod rewrite
+
+在docker-compose.yaml 所在的目录执行 docker-compose命令：
+
+docker-compose up -d
+
+进入数据库命令：
+docker-compose exec db mysql -uroot -proot
+
+
+停止容器: docker-compose down
+重启容器: docker-compose up -d
+重构服务: docker-compose up -d --build
+
